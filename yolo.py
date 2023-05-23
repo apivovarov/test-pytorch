@@ -38,25 +38,36 @@ print("Compiling...")
 #mode = "default" # 56, 55
 #mode = "max-autotune" # 57, 55
 mode = "reduce-overhead" # 58, 55
-evaluate_opt = torch.compile(evaluate, mode=mode)
-res = evaluate_opt(m, data)
-print("Compilation Done")
+try:
+    evaluate_opt = torch.compile(evaluate, mode=mode)
+    res = evaluate_opt(m, data)
+    print("Compilation Done")
 
-for fun, desc in [(evaluate, m_name), (evaluate_opt, f"{m_name}_inductor_reduce-overhead")]:
-    N = 10; i = 0
-    while i < N:
-        res = fun(m, data)
-        i += 1
+    AVG = []
 
-    N = 50; i = 0
-    TT = []
-    while i < N:
-        t0 = time.time()
-        res = fun(m, data)
-        dur = (time.time() - t0) * 1000
-        TT.append(dur)
-        i += 1
+    for fun, desc in [(evaluate, m_name), (evaluate_opt, f"{m_name}_compiled")]:
+        N = 10; i = 0
+        while i < N:
+            res = fun(m, data)
+            i += 1
 
-    print(f"{desc},{np.mean(TT):.3f},{np.percentile(TT, 50):.3f}")
-    with open("results.csv", "a") as f:
-        print(f"{desc},{np.mean(TT):.3f},{np.percentile(TT, 50):.3f}", file=f)
+        N = 50; i = 0
+        TT = []
+        while i < N:
+            t0 = time.time()
+            res = fun(m, data)
+            dur = (time.time() - t0) * 1000
+            TT.append(dur)
+            i += 1
+
+        AVG.append(np.mean(TT))
+        print(f"{desc},{np.mean(TT):.2f},{np.percentile(TT, 50):.2f}")
+
+    print(f"{m_name},{AVG[1]:.2f},{AVG[0]/AVG[1]:.2f}")
+    with open("results.csv","a") as f:
+        print(f"{m_name},{AVG[1]:.2f},{AVG[0]/AVG[1]:.2f}", file=f)
+
+except:
+    print(f"{m_name},F,F")
+    with open("results.csv","a") as f:
+        print(f"{m_name},F,F", file=f)

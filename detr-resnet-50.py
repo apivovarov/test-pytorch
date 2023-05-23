@@ -1,26 +1,38 @@
 # %%
 import torch
 import torchvision
-from torchvision.models.detection import MaskRCNN_ResNet50_FPN_V2_Weights, maskrcnn_resnet50_fpn_v2
 from PIL import Image
+import requests
+import torchvision.transforms as T
 torch.__version__
 
 # %%
-m_name = "MaskRCNN"
-weights = MaskRCNN_ResNet50_FPN_V2_Weights.DEFAULT
-m = maskrcnn_resnet50_fpn_v2(weights=weights)
-m = m.eval()
+# standard PyTorch mean-std input image normalization
+transform = T.Compose([
+    T.Resize(800),
+    T.ToTensor(),
+    T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+])
 
 # %%
-image = Image.open("zidane.jpg")
-preprocess = weights.transforms()
-data = preprocess(image)
-data = data.unsqueeze(0)
-print(data.shape)
+m_name = "detr_resnet50"
+m = torch.hub.load('facebookresearch/detr', 'detr_resnet50', pretrained=True)
+m.eval();
 
 # %%
-res = m(data)
-print(res)
+url = 'http://images.cocodataset.org/val2017/000000039769.jpg'
+im = Image.open(requests.get(url, stream=True).raw)
+
+# %%
+# mean-std normalize the input image (batch-size: 1)
+data = transform(im).unsqueeze(0)
+
+# propagate through the model
+outputs = m(data)
+
+# keep only predictions with 0.7+ confidence
+probas = outputs['pred_logits'].softmax(-1)[0, :, :-1]
+
 
 # %%
 import time
@@ -43,12 +55,12 @@ try:
     AVG=[]
 
     for model, desc in [(m, m_name), (m_opt, f"{m_name}_compiled")]:
-        N = 5; i = 0
+        N = 10; i = 0
         while i < N:
             res = model(data)
             i += 1
 
-        N = 20; i = 0
+        N = 30; i = 0
         TT = []
         while i < N:
             t0 = time.time()
