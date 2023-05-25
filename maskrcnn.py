@@ -17,7 +17,7 @@ class TestMaskRCNN(TestModel):
         data = preprocess_fun(image)
         self.data = data.unsqueeze(0)
         self.N_warmup = 5
-        self.N_test = 20
+        self.N_test = 30
 
 # %%
 test = TestMaskRCNN()
