@@ -7,9 +7,11 @@ MODELS = [
   "vit_b_32.py",
   "resnet50.py",
   "resnext50.py",
+  "swin_v2_b"
   "maskrcnn.py",
   "yolo.py",
-  "beit.py"
+  "beit.py",
+  "segformer-b3.py"
 ]
 
 for f in MODELS:
