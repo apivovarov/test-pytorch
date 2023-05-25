@@ -21,10 +21,10 @@ class TestModel():
 
     @torch.inference_mode()
     def call_baseline_model(self):
-        self.model(self.data)
+        return self.model(self.data)
 
     def call_compiled_model(self):
-        self.compiled_model(self.data)
+        return self.compiled_model(self.data)
 
     def _run_model(self, fun, desc):
         print(f"Running {desc} test...")
@@ -56,7 +56,8 @@ class TestModel():
             print(f"{self.m_name},{AVG[1]:.2f},{AVG[0]/AVG[1]:.2f}")
             with open("results.csv","a") as f:
                 print(f"{self.m_name},{AVG[1]:.2f},{AVG[0]/AVG[1]:.2f}", file=f)
-        except:
+        except Exception as e:
+            print(e)
             print(f"{self.m_name},F,F")
             with open("results.csv","a") as f:
                 print(f"{self.m_name},F,F", file=f)

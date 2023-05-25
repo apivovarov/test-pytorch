@@ -27,7 +27,7 @@ class TestResnet50(TestModel):
 
     @torch.inference_mode()
     def call_baseline_model(self):
-        self.frozen_model(self.data)
+       return self.frozen_model(self.data)
 
 
 # %%

@@ -26,8 +26,8 @@ class TestDetrResnet50(TestModel):
         # mean-std normalize the input image (batch-size: 1)
         self.data = transform(im).unsqueeze(0)
 
-        self.N_warmup = 1
-        self.N_test = 3
+        self.N_warmup = 5
+        self.N_test = 30
         res = self.model(self.data)
         print("Optimizing for inference")
         self.traced_model = torch.jit.trace(DictToListModel(m), self.data)
@@ -36,7 +36,7 @@ class TestDetrResnet50(TestModel):
 
     @torch.inference_mode()
     def call_baseline_model(self):
-        self.traced_model(self.data)
+        return self.traced_model(self.data)
 
 # %%
 test = TestDetrResnet50()

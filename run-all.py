@@ -8,7 +8,8 @@ MODELS = [
   "resnet50.py",
   "resnext50.py",
   "maskrcnn.py",
-  "yolo.py"
+  "yolo.py",
+  "beit.py"
 ]
 
 for f in MODELS:
