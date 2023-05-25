@@ -6,6 +6,7 @@ MODELS = [
   "detr-resnet-50.py",
   "vit_b_32.py",
   "resnet50.py",
+  "resnext50.py",
   "maskrcnn.py",
   "yolo.py"
 ]

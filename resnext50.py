@@ -1,16 +1,16 @@
 # %%
 import torch
-from torchvision.models import vit_b_32, ViT_B_32_Weights
+from torchvision.models import resnext50_32x4d, ResNeXt50_32X4D_Weights
 from PIL import Image
 from test_model import TestModel
 
 # %%
-class TestVitB32(TestModel):
+class TestResnext50(TestModel):
     def __init__(self) -> None:
         super().__init__()
-        self.m_name = "vit_b_32"
-        weights = ViT_B_32_Weights.DEFAULT
-        m = vit_b_32(weights=weights)
+        self.m_name = "resnext50_32x4d"
+        weights = ResNeXt50_32X4D_Weights.DEFAULT
+        m = resnext50_32x4d(weights=weights)
         m = m.eval()
         self.model = m
 
@@ -31,5 +31,5 @@ class TestVitB32(TestModel):
 
 
 # %%
-test = TestVitB32()
+test = TestResnext50()
 test.run_test()
